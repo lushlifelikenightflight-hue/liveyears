@@ -68,7 +68,7 @@ renderYearOptions();
 let flyerStatus=typeof initialFlyerStatus==='undefined'?{}:initialFlyerStatus.edits;
 let flyerStatusRevision=typeof initialFlyerStatus==='undefined'?0:initialFlyerStatus.revision;
 const hasNoFlyer=id=>flyerStatus[id]?.noFlyer===true;
-const flyersFor=id=>isUnannounced(id)?[]:(typeof reviewedFlyerCatalog!=='undefined'?reviewedFlyerCatalog:typeof flyerCatalog!=='undefined'?flyerCatalog:{})[id]||[];
+const flyersFor=id=>isUnannounced(id)?[]:[...(typeof uploadedFlyerCatalog!=='undefined'?uploadedFlyerCatalog[id]||[]:[]),...((typeof reviewedFlyerCatalog!=='undefined'?reviewedFlyerCatalog:typeof flyerCatalog!=='undefined'?flyerCatalog:{})[id]||[])].filter((item,index,all)=>all.findIndex(other=>other.image===item.image)===index);
 let map, layer;
 const markers = {};
 if (window.L) {
@@ -130,7 +130,8 @@ function render() {
   $('mapcount').textContent = `${plotted.length} RECORDS`;
   $('resultcount').textContent = `${filtered.length} 件`;
   $('period').textContent = annual.length ? `${annual[0].date.replaceAll('-','.')} — ${annual.at(-1).endDate || annual.at(-1).date}`.replaceAll('-','.') : '';
-  $('archive-description').textContent = '2017–2026年の活動アーカイブ。茶封筒でバンド活動を始めてちょうど10年が経つのでついでにこの10年でライブをした情報をすべてまとめた。まめなのでまいとしメモ帳にすべての予定を書き込んでおり平気で10年分のライブ予定がぜんぶ書かれていたのでたすかった。ありがて～。らーめんの記録も全部残ってるからやろうかな。';
+  if(typeof introContent!=='undefined')$('archive-title').textContent=introContent.title;
+  $('archive-description').textContent = typeof introContent!=='undefined'?introContent.description:'2017–2026年の活動アーカイブ。茶封筒でバンド活動を始めてちょうど10年が経つのでついでにこの10年でライブをした情報をすべてまとめた。まめなのでまいとしメモ帳にすべての予定を書き込んでおり平気で10年分のライブ予定がぜんぶ書かれていたのでたすかった。ありがて～。らーめんの記録も全部残ってるからやろうかな。';
   $('mapnote').textContent = `${LAYER_CLUSTER_NOTE()}${missing ? READ_ONLY?` 地図に表示しない記録 ${missing}件。`:` 位置未特定 ${missing}件は下の調査一覧へ。` : ''}`;
   $('position-summary').textContent = `地図上 ${plotted.length}件 / ${READ_ONLY?'地図に表示しない記録':'位置未特定'} ${missing}件。候補・参考位置を含みます。`;
   $('footer-period').textContent = year==='all'?fullPeriod:year;

@@ -44,6 +44,7 @@
     currentShow=shows.find(s=>s.id===(button.dataset.flyer||button.dataset.id));
     if(!currentShow)return;
     items = hasNoFlyer(currentShow.id)?[]:flyersFor(currentShow.id);
+    if(!READ_ONLY){document.getElementById("show-upload").dataset.id=currentShow.id;document.getElementById("flyer-upload-status").textContent="JPEG・PNG・WebP、10MBまで。複数枚を順に追加できます。";}
     const s=currentShow,info=infoFor(s);
     document.getElementById('show-title').textContent=venueLabel(s.venue);
     document.getElementById('show-date').textContent=dateLabel(s,true);
